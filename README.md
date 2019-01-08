@@ -1,0 +1,2 @@
+# OlimpOddsParser
+Olimp websocket parser
