@@ -16,10 +16,16 @@ object OlimpJSONParser {
     }
 
     fun parseUpdate(frameData: String?): List<Update?> {
+        val jsonsObjectsList: List<String>?
         val objectsList: MutableList<Update?> = mutableListOf()
-        val jsonsObjectsList: List<String>? = Klaxon().parseArray( frameData!! )
 
-        jsonsObjectsList?.forEach { jsonsObject -> objectsList.add( Klaxon().parse( jsonsObject ) ) }
+        if (frameData != null) {
+            jsonsObjectsList = Klaxon().parseArray( frameData )
+        } else {
+            jsonsObjectsList = listOf()
+        }
+
+        jsonsObjectsList?.forEach { jsonsObject -> objectsList.add( Klaxon().parse( jsonsObject ) )}
 
         return objectsList.toList()
     }

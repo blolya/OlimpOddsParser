@@ -1,13 +1,6 @@
 package olimp.objects.updates
 
-import com.beust.klaxon.Klaxon
-
 class UpdateOutcomes {
-
-    override fun toString(): String {
-        return this.id.toString() + ": " + this.name
-    }
-
     var id: Long = 0
     var id9: Long = 0
     var groupId = 0

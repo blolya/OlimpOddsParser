@@ -1,5 +1,7 @@
 package main
 
+import olimp.objects.events.Event
+
 interface OddsServiceInterface {
-    fun getLiveOdds()
+    fun getLiveEvents(): Map<Long, Event>
 }

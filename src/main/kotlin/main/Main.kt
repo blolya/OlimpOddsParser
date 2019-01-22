@@ -5,5 +5,6 @@ import olimp.OlimpOddsService
 fun main(args: Array<String>) {
     val osi: OddsServiceInterface = OlimpOddsService(1)
 
-    osi.getLiveOdds()
+    val liveEvents = osi.getLiveEvents()
+    println( liveEvents.toString() )
 }
