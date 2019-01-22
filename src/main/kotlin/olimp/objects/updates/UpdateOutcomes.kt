@@ -5,7 +5,7 @@ import com.beust.klaxon.Klaxon
 class UpdateOutcomes {
 
     override fun toString(): String {
-        return Klaxon().toJsonString(this)
+        return this.id.toString() + ": " + this.name
     }
 
     var id: Long = 0
