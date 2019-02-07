@@ -9,13 +9,17 @@ import olimp.objects.events.Event
 import olimp.objects.updates.Update
 
 
-class OlimpOddsService : OddsServiceInterface {
+class OlimpOddsService(private var channelId: Int) : OddsServiceInterface {
 
-    constructor(channelId: Int) {
+    override fun getLiveEvents(): Map<Long, Event> {
+        return this.liveEvents
+    }
+
+    private val websocketClient: WebsocketClient?
+    private var liveEvents: MutableMap<Long, Event> = mutableMapOf()
+
+    init {
         val self = this
-
-        this.channelId = channelId
-
         this.websocketClient = WebsocketClient(
             url = "wss://ruolimp.ru/eventbus/199/f3onps3k/websocket",
             onOpen = { run {
@@ -48,10 +52,10 @@ class OlimpOddsService : OddsServiceInterface {
                                                     self.liveEvents.remove(matchId)
                                                     println("The ${matchId} event has been removed")
                                                 }
-                                                else -> self.liveEvents.getValue(matchId).update(lastUpdate)
+                                                else -> self.liveEvents.getValue(matchId).upgrade(lastUpdate)
                                             }
                                         } else {
-                                            self.liveEvents.put(matchId, Event(matchId))
+                                            self.liveEvents.put(matchId, Event(lastUpdate))
                                             println("The ${matchId} event has been added to the list")
                                         }
                                     }
@@ -63,19 +67,6 @@ class OlimpOddsService : OddsServiceInterface {
                 }
             } }
         )
-
         this.websocketClient.connect()
     }
-
-    override fun getLiveEvents(): Map<Long, Event> {
-        return this.liveEvents
-    }
-
-    private var channelId: Int = 0
-    private val websocketClient: WebsocketClient?
-    private var liveEvents: MutableMap<Long, Event> = mutableMapOf()
-}
-
-fun MutableMap<Long, Event>.toString(): String {
-    return Klaxon().toJsonString(this)
 }

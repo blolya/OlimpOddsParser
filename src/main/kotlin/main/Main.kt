@@ -6,5 +6,4 @@ fun main(args: Array<String>) {
     val osi: OddsServiceInterface = OlimpOddsService(1)
 
     val liveEvents = osi.getLiveEvents()
-    println( liveEvents.toString() )
 }
