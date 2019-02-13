@@ -1,6 +1,6 @@
 package olimp.objects.updates
 
-class UpdateOutcomes {
+class UpdateOutcome {
     var id: Long = 0
     var id9: Long = 0
     var groupId = 0

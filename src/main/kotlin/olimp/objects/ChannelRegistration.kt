@@ -2,7 +2,7 @@ package olimp.objects
 
 import java.util.HashMap
 
-class ChannelRegistration : OlimpObject {
+class ChannelRegistration: OlimpObject {
 
     constructor(channelId: Int) {
         this.address = "s" + channelId.toString() + "/0"
