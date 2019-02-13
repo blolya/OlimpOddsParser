@@ -1,7 +1,5 @@
 package olimp
 
-import com.beust.klaxon.Klaxon
-import io.reactivex.Observable
 import libs.websocket.WebsocketClient
 import main.Odds
 import main.OddsServiceInterface
@@ -9,20 +7,17 @@ import olimp.objects.ChannelRegistration
 import olimp.objects.Ping
 import olimp.objects.events.Event
 import olimp.objects.updates.Update
+import io.reactivex.subjects.PublishSubject
+
+
 
 
 class OlimpOddsService(private var channelId: Int) : OddsServiceInterface {
 
-    override fun getLiveEvents(): Map<Long, Event> {
-        return this.liveEvents
-    }
-
     private val websocketClient: WebsocketClient?
     private var liveEvents: MutableMap<Long, Event> = mutableMapOf()
 
-/*    private val oddsList: MutableList<Odds> = mutableListOf()
-    private var odds: Odds = Odds()
-    private val oddsFlow: Observable<Odds> = Observable.fromIterable(oddsList)*/
+    private val oddsFlow: PublishSubject<Odds> = PublishSubject.create()
 
     init {
         val self = this
@@ -56,11 +51,11 @@ class OlimpOddsService(private var channelId: Int) : OddsServiceInterface {
                                             when (lastUpdate.body.matchInfo.removed) {
                                                 true -> run {
                                                     self.liveEvents.remove(matchId)
-                                                    println("The ${matchId} event has been removed")
+                                                    //println("The ${matchId} event has been removed")
                                                 }
                                                 else -> run {
-                                                    /*lastUpdate.body.outcomes.forEach { outcome ->
-                                                        self.oddsList.add(
+                                                    lastUpdate.body.outcomes.forEach { outcome ->
+                                                        self.oddsFlow.onNext(
                                                             Odds(
                                                                 self.liveEvents.getValue(matchId).getSportId(),
                                                                 self.liveEvents.getValue(matchId).getId(),
@@ -69,12 +64,8 @@ class OlimpOddsService(private var channelId: Int) : OddsServiceInterface {
                                                                 outcome.name,
                                                                 outcome.value,
                                                                 outcome.removed
-                                                            )
-                                                        )
+                                                            ))
                                                     }
-                                                    self.oddsFlow.subscribe( {odds -> println(Klaxon().toJsonString(odds))} )*/
-                                                    self.liveEvents.getValue(matchId).pour(lastUpdate)
-                                                    //self.liveEvents.getValue(matchId).upgrade(lastUpdate)
                                                 }
                                             }
                                         } else {
@@ -91,5 +82,9 @@ class OlimpOddsService(private var channelId: Int) : OddsServiceInterface {
             } }
         )
         this.websocketClient.connect()
+    }
+
+    override fun getOddsFlow(): PublishSubject<Odds> {
+        return this.oddsFlow
     }
 }
