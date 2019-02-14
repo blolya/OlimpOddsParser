@@ -2,6 +2,7 @@ package main
 
 class Odds(
     val sportId: Int = 0,
+    val sportName: String = "",
     val matchId: Long = 0,
     val matchName: String = "",
     val outcomeId: Long = 0,

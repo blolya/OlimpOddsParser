@@ -8,6 +8,7 @@ import olimp.objects.Ping
 import olimp.objects.events.Event
 import olimp.objects.updates.Update
 import io.reactivex.subjects.PublishSubject
+import olimp.objects.updates.UpdateOutcome
 
 class OlimpOddsService(private val sportId: Int) : OddsServiceInterface {
 
@@ -18,7 +19,7 @@ class OlimpOddsService(private val sportId: Int) : OddsServiceInterface {
     init {
         val self = this
         this.websocketClient = WebsocketClient(
-            url = "wss://ruolimp.ru/eventbus/199/f3onps3k/websocket",
+            url = "wss://ruolimp.ru/eventbus/418/f0gdoqta/websocket",
             onOpen = { run {
 
                 this.send( OlimpJSONParser.stringify( listOf( Ping() ) ) )
@@ -44,24 +45,14 @@ class OlimpOddsService(private val sportId: Int) : OddsServiceInterface {
                                         self.liveEvents.remove(matchId)
                                     } else {
                                         lastUpdate.body.outcomes.forEach { outcome -> run {
-                                            if (self.oddsFlow != null) {
-                                                self.oddsFlow.onNext(
-                                                    Odds(
-                                                        self.liveEvents.getValue(matchId).getSportId(),
-                                                        self.liveEvents.getValue(matchId).getMatchId(),
-                                                        self.liveEvents.getValue(matchId).getMatchName(),
-                                                        outcome.id,
-                                                        outcome.name,
-                                                        outcome.value,
-                                                        outcome.removed
-                                                    )
-                                                )
-                                            }
+                                            if (self.oddsFlow != null) self.oddsFlow.pourOdds(matchId, self.liveEvents, outcome)
                                         } }
                                     }
-
                                 } else {
                                     self.liveEvents.put( matchId, Event(lastUpdate) )
+                                    lastUpdate.body.outcomes.forEach { outcome -> run {
+                                        if (self.oddsFlow != null) self.oddsFlow.pourOdds(matchId, self.liveEvents, outcome)
+                                    } }
                                 }
                             } else {
                                 println("Empty update has arrived")
@@ -80,4 +71,19 @@ class OlimpOddsService(private val sportId: Int) : OddsServiceInterface {
     override fun getOddsFlow(): PublishSubject<Odds>? {
         return this.oddsFlow
     }
+}
+
+fun PublishSubject<Odds>.pourOdds(matchId: Long, liveEvents: MutableMap<Long, Event>, outcome: UpdateOutcome) {
+    this.onNext(
+        Odds(
+            liveEvents.getValue(matchId).getSportId(),
+            liveEvents.getValue(matchId).getSportName(),
+            liveEvents.getValue(matchId).getMatchId(),
+            liveEvents.getValue(matchId).getMatchName(),
+            outcome.id,
+            outcome.name,
+            outcome.value,
+            outcome.removed
+        )
+    )
 }
