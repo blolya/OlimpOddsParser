@@ -23,7 +23,7 @@ class OlimpOddsService(private val sportId: Int) : OddsServiceInterface {
             onOpen = { run {
 
                 this.send( OlimpJSONParser.stringify( listOf( Ping() ) ) )
-                this.send( OlimpJSONParser.stringify( listOf( ChannelRegistration(self.sportId) ) ) )
+                this.send( OlimpJSONParser.stringify( listOf( ChannelRegistration("s${self.sportId}/0" ) ) ) )
 
             } },
             onClose = { code, _, _ -> println(code) },
@@ -49,6 +49,7 @@ class OlimpOddsService(private val sportId: Int) : OddsServiceInterface {
                                         } }
                                     }
                                 } else {
+                                    this.send( OlimpJSONParser.stringify( listOf( ChannelRegistration("$matchId/0" ) ) ) )
                                     self.liveEvents.put( matchId, Event(lastUpdate) )
                                     lastUpdate.body.outcomes.forEach { outcome -> run {
                                         if (self.oddsFlow != null) self.oddsFlow.pourOdds(matchId, self.liveEvents, outcome)
