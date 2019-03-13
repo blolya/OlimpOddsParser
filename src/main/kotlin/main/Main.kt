@@ -7,5 +7,5 @@ fun main(args: Array<String>) {
     val osi: OddsServiceInterface = OlimpOddsService(1)
     val oddsFlow = osi.getOddsFlow()
 
-    if (oddsFlow != null) oddsFlow.subscribe { odds -> println( Klaxon().toJsonString(odds) ) }
+    oddsFlow.subscribe { odds -> println( Klaxon().toJsonString(odds) ) }
 }

@@ -1,7 +1,8 @@
 package main
 
+import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 
 interface OddsServiceInterface {
-    fun getOddsFlow(): PublishSubject<Odds>?
+    fun getOddsFlow(): Observable<Odds>
 }

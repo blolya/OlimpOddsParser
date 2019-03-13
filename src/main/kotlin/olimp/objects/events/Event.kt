@@ -4,8 +4,8 @@ import olimp.objects.updates.Update
 
 class Event(update: Update) {
 
-    private val sportId: Int = update.body.matchInfo.sportId
-    private val sportName: String = when(this.sportId) {
+    val sportId: Int = update.body.matchInfo.sportId
+    val sportName: String = when(this.sportId) {
         1 -> "футбол"
         2 -> "хоккей"
         3 -> "теннис"
@@ -23,19 +23,8 @@ class Event(update: Update) {
         135 -> "шорт-хоккей"*/
         else -> ""
     }
-    private val matchId: Long = update.body.matchInfo.id
-    private val matchName: String = update.body.matchInfo.name
+    val matchId: Long = update.body.matchInfo.id
+    val matchName: String = update.body.matchInfo.name
 
-    fun getSportId(): Int {
-        return this.sportId
-    }
-    fun getSportName(): String {
-        return this.sportName
-    }
-    fun getMatchId(): Long {
-        return this.matchId
-    }
-    fun getMatchName(): String {
-        return this.matchName
-    }
+
 }

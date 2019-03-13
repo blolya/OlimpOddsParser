@@ -5,7 +5,7 @@ import olimp.objects.OlimpObject
 import olimp.objects.updates.Update
 
 object OlimpJSONParser {
-    fun stringify(objectsList: List<OlimpObject>) : String {
+    fun stringify(objectsList: List<Any>) : String {
         val jsonsList: MutableList<String> = mutableListOf()
 
         objectsList.forEach { obj -> jsonsList.add( Klaxon().toJsonString(obj) ) }
